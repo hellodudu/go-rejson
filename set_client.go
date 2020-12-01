@@ -34,3 +34,10 @@ func (r *Handler) SetGoRedisClient(conn *goredis.Client) {
 	r.clientName = "goredis"
 	r.implementation = &clients.GoRedis{Conn: conn}
 }
+
+// SetGoRedisClusterClient sets Go-Redis-Cluster (https://github.com/go-redis/redis) client to
+// the handler
+func (r *Handler) SetGoRedisClusterClient(conn *goredis.ClusterClient) {
+	r.clientName = "gorediscluster"
+	r.implementation = &clients.GoRedisCluster{Conn: conn}
+}

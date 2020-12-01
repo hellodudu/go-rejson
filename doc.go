@@ -41,9 +41,12 @@ Set Redigo Client and use ReJSON in it
 	conn, _ := redis.Dial("tcp", *addr)
 	rh.SetRedigoClient(conn)
 
-Similarly, one can set client for Go-Redis
+Similarly, one can set client or cluster-client for Go-Redis
 	cli := goredis.NewClient(&goredis.Options{Addr: *addr})
 	rh.SetGoRedisClient(cli)
+
+	clusterCli := goredis.NewClusterClient(&goredis.ClusterOptions{Addrs: []string{*addr}})
+	rh.SetGoRedisClusterClient(clusterCli)
 
 And now, one can directly use ReJSON commands using the handler
 	res, err := rh.JSONSet("str", ".", "string")

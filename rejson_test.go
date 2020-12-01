@@ -2,9 +2,10 @@ package rejson
 
 import (
 	"encoding/json"
-	"github.com/nitishm/go-rejson/rjs"
 	"reflect"
 	"testing"
+
+	"github.com/nitishm/go-rejson/rjs"
 
 	goredis "github.com/go-redis/redis/v7"
 	redigo "github.com/gomodule/redigo/redis"
@@ -40,6 +41,9 @@ func (t *TestClient) SetTestingClient(conn interface{}) {
 	case *goredis.Client:
 		t.name = "GoRedis-"
 		t.rh.SetGoRedisClient(conn)
+	case *goredis.ClusterClient:
+		t.name = "GoRedisCluster-"
+		t.rh.SetGoRedisClusterClient(conn)
 	default:
 		t.name = "-"
 		t.conn = "inactive"
@@ -60,6 +64,9 @@ func TestReJSON(t *testing.T) {
 
 	// GoRedis Test Client
 	goredisCli := goredis.NewClient(&goredis.Options{Addr: "localhost:6379"})
+
+	// GoRedis Cluster Test Client
+	goredisClusterCli := goredis.NewClusterClient(&goredis.ClusterOptions{Addrs: []string{"localhost:6379"}})
 
 	clientsObj := []struct {
 		cli       interface{}
@@ -82,6 +89,14 @@ func TestReJSON(t *testing.T) {
 			}
 			if err := goredisCli.Close(); err != nil {
 				t.Fatalf("goredis - failed to communicate to redis-server: %v", err)
+			}
+		}},
+		{cli: goredisClusterCli, name: "GoRedisCluster ", closeFunc: func() {
+			if err := goredisClusterCli.FlushAll().Err(); err != nil {
+				t.Fatalf("goredisCluster - failed to flush: %v", err)
+			}
+			if err := goredisClusterCli.Close(); err != nil {
+				t.Fatalf("goredisCluster - failed to communicate to redis-server: %v", err)
 			}
 		}},
 	}
