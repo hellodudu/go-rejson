@@ -1,4 +1,4 @@
-module github.com/nitishm/go-rejson
+module github.com/hellodudu/go-rejson
 
 go 1.14
 
